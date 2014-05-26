@@ -687,6 +687,11 @@ typedef enum {
 -(NSString*) uniqueIdentifier;
 
 - (instancetype)initWithURLString:(NSString *)aURLString
+                           params:(NSDictionary *)params
+                       httpMethod:(NSString *)method;
+
+- (instancetype)initWithURLString:(NSString *)aURLString
                  params:(NSDictionary *)params
-             httpMethod:(NSString *)method;
+             httpMethod:(NSString *)method
+           timeoutInterval:(NSTimeInterval)timeoutInterval;
 @end

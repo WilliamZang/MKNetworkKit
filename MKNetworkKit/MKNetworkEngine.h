@@ -135,6 +135,23 @@
 
 /*!
  *  @abstract Creates a simple GET Operation with a request URL, parameters, HTTP Method and the SSL switch
+ *
+ *  @discussion
+ *	Creates an operation with the given URL path.
+ *  The ssl option when true changes the URL to https.
+ *  The ssl option when false changes the URL to http.
+ *  The default headers you specified in your MKNetworkEngine subclass gets added to the headers
+ *  The params dictionary in this method gets attached to the URL as query parameters if the HTTP Method is GET/DELETE
+ *  The params dictionary is attached to the body if the HTTP Method is POST/PUT
+ *  The previously mentioned methods operationWithPath: and operationWithPath:params: call this internally
+ */
+-(MKNetworkOperation*) operationWithPath:(NSString*) path
+                                  params:(NSDictionary*) body
+                              httpMethod:(NSString*)method
+                                     ssl:(BOOL) useSSL;
+
+/*!
+ *  @abstract Creates a simple GET Operation with a request URL, parameters, HTTP Method, the SSL switch and timeout interval
  *  
  *  @discussion
  *	Creates an operation with the given URL path.
@@ -148,7 +165,8 @@
 -(MKNetworkOperation*) operationWithPath:(NSString*) path
                          params:(NSDictionary*) body
                    httpMethod:(NSString*)method 
-                          ssl:(BOOL) useSSL;
+                          ssl:(BOOL) useSSL
+              timeoutInterval:(NSTimeInterval)timeoutInterval;
 
 /*!
  *  @abstract Creates a simple GET Operation with a request URL
@@ -191,6 +209,25 @@
 -(MKNetworkOperation*) operationWithURLString:(NSString*) urlString
                               params:(NSDictionary*) body
                         httpMethod:(NSString*) method;
+
+/*!
+ *  @abstract Creates a simple Operation with a request URL, parameters ,HTTP Method and timeout interval
+ *
+ *  @discussion
+ *	Creates an operation with the given absolute URL.
+ *  The hostname of the engine is *NOT* prefixed
+ *  The default headers you specified in your MKNetworkEngine subclass gets added to the headers
+ *  The params dictionary in this method gets attached to the URL as query parameters if the HTTP Method is GET/DELETE
+ *  The params dictionary is attached to the body if the HTTP Method is POST/PUT
+ *	This method can be over-ridden by subclasses to tweak the operation creation mechanism.
+ *  You would typically over-ride this method to create a subclass of MKNetworkOperation (if you have one). After you create it, you should call [super prepareHeaders:operation] to attach any custom headers from super class.
+ *  @seealso
+ *  prepareHeaders:
+ */
+-(MKNetworkOperation*) operationWithURLString:(NSString*) urlString
+                                       params:(NSDictionary*) body
+                                   httpMethod:(NSString*) method
+                              timeoutInterval:(NSTimeInterval)timeoutInterval;
 
 /*!
  *  @abstract adds the custom default headers
@@ -422,4 +459,5 @@
  */
 @property (nonatomic, assign) BOOL shouldSendAcceptLanguageHeader;
 
+@property (nonatomic, assign) NSTimeInterval timeoutInterval;
 @end

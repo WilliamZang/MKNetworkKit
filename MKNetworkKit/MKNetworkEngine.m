@@ -137,6 +137,7 @@ static NSOperationQueue *_sharedNetworkQueue;
     
     self.customOperationSubclass = [MKNetworkOperation class];
     self.shouldSendAcceptLanguageHeader = YES;
+    self.timeoutInterval = kMKNetworkKitRequestTimeOutInSeconds;
   }
   
   return self;
@@ -352,7 +353,15 @@ static NSOperationQueue *_sharedNetworkQueue;
 -(MKNetworkOperation*) operationWithPath:(NSString*) path
                                   params:(NSDictionary*) body
                               httpMethod:(NSString*)method
-                                     ssl:(BOOL) useSSL {
+                                     ssl:(BOOL) useSSL{
+  return [self operationWithPath:path params:body httpMethod:method ssl:useSSL timeoutInterval:self.timeoutInterval];
+}
+
+-(MKNetworkOperation*) operationWithPath:(NSString*) path
+                                  params:(NSDictionary*) body
+                              httpMethod:(NSString*)method
+                                     ssl:(BOOL) useSSL
+                         timeoutInterval:(NSTimeInterval)timeoutInterval{
   
   if(self.hostName == nil) {
     
@@ -377,7 +386,7 @@ static NSOperationQueue *_sharedNetworkQueue;
   }
 
   
-  return [self operationWithURLString:urlString params:body httpMethod:method];
+  return [self operationWithURLString:urlString params:body httpMethod:method timeoutInterval:timeoutInterval];
 }
 
 -(MKNetworkOperation*) operationWithURLString:(NSString*) urlString {
@@ -396,7 +405,15 @@ static NSOperationQueue *_sharedNetworkQueue;
                                        params:(NSDictionary*) body
                                    httpMethod:(NSString*)method {
   
-  MKNetworkOperation *operation = [[self.customOperationSubclass alloc] initWithURLString:urlString params:body httpMethod:method];
+  return [self operationWithURLString:urlString params:body httpMethod:method timeoutInterval:self.timeoutInterval];
+}
+
+-(MKNetworkOperation*) operationWithURLString:(NSString*) urlString
+                                       params:(NSDictionary*) body
+                                   httpMethod:(NSString*)method
+                              timeoutInterval:(NSTimeInterval)timeoutInterval{
+  
+  MKNetworkOperation *operation = [[self.customOperationSubclass alloc] initWithURLString:urlString params:body httpMethod:method timeoutInterval:timeoutInterval];
   operation.shouldSendAcceptLanguageHeader = self.shouldSendAcceptLanguageHeader;
   
   [self prepareHeaders:operation];

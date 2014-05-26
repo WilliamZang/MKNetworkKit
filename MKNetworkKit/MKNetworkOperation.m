@@ -90,8 +90,13 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data,
 @property (strong, nonatomic) NSError *error;
 
 - (instancetype)initWithURLString:(NSString *)aURLString
+                           params:(NSDictionary *)body
+                       httpMethod:(NSString *)method;
+
+- (instancetype)initWithURLString:(NSString *)aURLString
                  params:(NSDictionary *)body
-             httpMethod:(NSString *)method;
+             httpMethod:(NSString *)method
+           timeoutInterval:(NSTimeInterval)timeoutInterval;
 
 -(NSData*) bodyData;
 
@@ -609,9 +614,17 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data,
   [self.downloadStreams addObject:outputStream];
 }
 
+- (instancetype)initWithURLString:(NSString *)aURLString
+                           params:(NSDictionary *)params
+                       httpMethod:(NSString *)method
+{
+  return [self initWithURLString:aURLString params:params httpMethod:method timeoutInterval:kMKNetworkKitRequestTimeOutInSeconds];
+}
+
 - (id)initWithURLString:(NSString *)aURLString
                  params:(NSDictionary *)params
              httpMethod:(NSString *)method
+           timeoutInterval:(NSTimeInterval)timeoutInterval
 
 {
   if((self = [super init])) {
@@ -659,7 +672,7 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data,
     
     self.request = [NSMutableURLRequest requestWithURL:finalURL
                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
-                                       timeoutInterval:kMKNetworkKitRequestTimeOutInSeconds];
+                                       timeoutInterval:timeoutInterval];
     
     [self.request setHTTPMethod:method];
     
